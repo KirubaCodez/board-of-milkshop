@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Milk Shop</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-size: 18px;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+            position: relative;
+            height: 100dvh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .milk-shop {
+            width: 100%;
+            max-width: 600px;
+            padding: 0 15px;
+            margin: auto;
+        }
+
+        table {
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+
+        table th,
+        table td {
+            border: 1px solid #888;
+            padding: 5px 30px;
+            text-align: center;
+            text-transform: capitalize;
+        }
+
+        table td[colspan="2"] {
+            font-weight: 600;
+            font-size: 24px;
+        }
+
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .input-wrapper .input-group {
+            width: 50%;
+        }
+
+        .input-wrapper .input-group label {
+            font-size: 14px;
+            display: block;
+            line-height: 1.2;
+        }
+
+        .input-wrapper .input-group input {
+            display: block;
+            width: 100%;
+            margin: 5px 0 0 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .error-div {
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .error-div .error-msg {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: capitalize;
+            color: #f00;
+            transition: 0.5s ease-in-out;
+            transform: scale(0);
+            display: block;
+        }
+
+        .error-div.itsError .error-msg {
+            transform: scale(1);
+        }
+
+        .error-div.itsSuccess .error-msg {
+            color: green;
+            transform: scale(1);
+        }
+
+        #submit-btn {
+            display: block;
+            padding: 10px 0;
+            width: 100%;
+            background: #62b2c5;
+            border-radius: 50px;
+            font-size: 20px;
+            text-transform: uppercase;
+            font-weight: 600;
+            color: #fff;
+            line-height: 1;
+            border: none;
+            box-shadow: 0px 10px 10px -10px rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+        }
+
+        .result {
+            text-align: center;
+            margin: 20px 0 0 0;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        @media (max-width: 480px) {
+
+            table th,
+            table td {
+                font-size: 12px;
+            }
+
+            .input-wrapper .input-group input {
+                padding: 5px;
+            }
+
+            .input-wrapper .input-group label {
+                font-size: 12px;
+            }
+
+            .error-div .error-msg {
+                font-size: 10px;
+            }
+
+            .result p {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="milk-shop">
+        <div class="board">
+            <table>
+                <tr>
+                    <td colspan="2">Board</td>
+                </tr>
+                <tr>
+                    <th>quantity(L)</th>
+                    <th>amount($)</th>
+                </tr>
+                <tr>
+                    <td>500ml</td>
+                    <td>1.5</td>
+                </tr>
+                <tr>
+                    <td>1000ml</td>
+                    <td>2.5</td>
+                </tr>
+                <tr>
+                    <td>1500ml</td>
+                    <td>4</td>
+                </tr>
+                <tr>
+                    <td>2000ml</td>
+                    <td>5</td>
+                </tr>
+            </table>
+        </div>
+        <div class="input-wrapper">
+            <div class="input-group">
+                <label for="cash-input">Your total amount:</label>
+                <input type="text" class="data-input" id="cash-input" placeholder="" autocomplete="off" required />
+            </div>
+            <div class="input-group">
+                <label for="quantity-input">Enter the quantity:</label>
+                <input type="text" class="data-input" id="quantity-input" placeholder="" autocomplete="off" required />
+            </div>
+            <div class="input-group">
+                <label for="items-input">How many bottles:</label>
+                <input type="text" class="data-input" id="items-input" placeholder="" autocomplete="off" required />
+            </div>
+        </div>
+        <div class="error-div">
+            <span class="error-msg" id="common-error"></span>
+        </div>
+        <button type="submit" id="submit-btn">calculate</button>
+        <div class="result">
+            <p id="number-of-bottles"></p>
+            <p id="items-you-want"></p>
+            <p id="balance-amount"></p>
+        </div>
+    </div>
+    <script>
+        const totalAmount = document.getElementById("cash-input");
+        const netQuantity = document.getElementById("quantity-input");
+        const items = document.getElementById("items-input");
+        const errParent = document.querySelector(".error-div");
+        const errorMsg = document.getElementById("common-error")
+        const submitBtn = document.getElementById("submit-btn");
+        const resultOfbottles = document.getElementById("number-of-bottles");
+        const noOfItemsYouWant = document.getElementById("items-you-want");
+        const resultOfRemaining = document.getElementById("balance-amount");
+
+        submitBtn.addEventListener('click', () => {
+            let amount = Number(totalAmount.value.trim());
+            let quantity = Number(netQuantity.value.trim());
+            let noOfItems = Number(items.value.trim());
+            let isValid = true;
+
+            // items validation
+            if (!noOfItems || isNaN(noOfItems)) {
+                errParent.classList.add('itsError');
+                errParent.classList.remove('itsSuccess');
+                errorMsg.innerText = "Please enter the value you want"
+                isValid = false;
+            }
+
+            // quandity validation
+            if (quantity === 500 || quantity === 0.5) {
+                quantity = 1.5;
+            } else if (quantity === 1000 || quantity === 1.0) {
+                quantity = 2.5;
+            } else if (quantity === 1500 || quantity === 1.5) {
+                quantity = 4;
+            } else if (quantity === 2000 || quantity === 2.0) {
+                quantity = 5;
+            } else {
+                errParent.classList.add('itsError');
+                errParent.classList.remove('itsSuccess');
+                errorMsg.innerText = "Please enter a valid quantity"
+                isValid = false;
+            }
+
+            // amount validation
+            if (totalAmount.value.trim() === "") {
+                errParent.classList.add('itsError');
+                errParent.classList.remove('itsSuccess');
+                errorMsg.innerText = "Please enter the total amount";
+                isValid = false;
+            } else if (amount < (quantity * noOfItems)) {
+                errParent.classList.add('itsError');
+                errParent.classList.remove('itsSuccess');
+                errorMsg.innerText = "You have insuficient Balance";
+                isValid = false;
+            }
+
+            // everything is valid
+            if (isValid) {
+                errParent.classList.remove('itsError');
+                errParent.classList.add('itsSuccess');
+                errorMsg.textContent = "thank you!"
+
+                buyMilk(amount, quantity, noOfItems);
+            }
+
+
+        });
+
+        function buyMilk(amount, quantity, noOfItems) {
+            resultOfbottles.innerText = (`You can buy ${calcBottles(amount, quantity)} bottles of milk with your total amount.`);
+            noOfItemsYouWant.innerText = (`You want ${calcRequiredItems(amount, quantity, noOfItems)}.`);
+            resultOfRemaining.innerText = (`You have $${calcChange(amount, quantity, noOfItems)} remaining.`)
+        }
+
+        function calcBottles(amount, quantity) {
+            let totalBottles = Math.floor(amount / quantity);
+            return totalBottles;
+        }
+
+        function calcRequiredItems(amount, quantity, noOfItems) {
+            if (noOfItems === 1) {
+                x = "bottle";
+            } else if (noOfItems > 1) {
+                x = "bottles";
+            }
+            return `${noOfItems} ${x}`;
+        }
+
+        function calcChange(amount, quantity, noOfItems) {
+            let change = amount - (quantity * noOfItems);
+            return change;
+        }
+
+    </script>
+</body>
+</html>

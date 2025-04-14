@@ -119,6 +119,10 @@
             gap: 5px;
         }
 
+        .result.active {
+            display: none;
+        }
+
         @media (max-width: 480px) {
 
             table th,
@@ -204,6 +208,7 @@
         const errParent = document.querySelector(".error-div");
         const errorMsg = document.getElementById("common-error")
         const submitBtn = document.getElementById("submit-btn");
+        const resultTab = document.querySelector(".result");
         const resultOfbottles = document.getElementById("number-of-bottles");
         const noOfItemsYouWant = document.getElementById("items-you-want");
         const resultOfRemaining = document.getElementById("balance-amount");
@@ -247,6 +252,7 @@
             } else if (amount < (quantity * noOfItems)) {
                 errParent.classList.add('itsError');
                 errParent.classList.remove('itsSuccess');
+                resultTab.classList.add('active');
                 errorMsg.innerText = "You have insuficient Balance";
                 isValid = false;
             }
@@ -255,6 +261,7 @@
             if (isValid) {
                 errParent.classList.remove('itsError');
                 errParent.classList.add('itsSuccess');
+                resultTab.classList.remove('active');
                 errorMsg.textContent = "thank you!"
 
                 buyMilk(amount, quantity, noOfItems);
